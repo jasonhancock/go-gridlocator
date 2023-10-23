@@ -1,11 +1,11 @@
 package gridlocator
 
 import (
+	"errors"
+	"fmt"
 	"math"
 	"strconv"
 	"strings"
-
-	"github.com/pkg/errors"
 )
 
 // Convert converts the specified decimanl longitude and latitude into the six
@@ -20,12 +20,12 @@ func Convert(latitude, longitude float64) (string, error) {
 	lng = (lng / 20) // + 0.0000001;
 	val, err := upperN2L(int(math.Floor(lng)))
 	if err != nil {
-		return "", errors.Wrap(err, "field longitude")
+		return "", fmt.Errorf("field longitude: %w", err)
 	}
 	locator := val
 	val, err = upperN2L(int(math.Floor(lat)))
 	if err != nil {
-		return "", errors.Wrap(err, "field latitude")
+		return "", fmt.Errorf("field latitude: %w", err)
 	}
 	locator += val
 
@@ -40,12 +40,12 @@ func Convert(latitude, longitude float64) (string, error) {
 	lng = 24 * (lng - math.Floor(lng))
 	val, err = n2l(int(math.Floor(lng)))
 	if err != nil {
-		return "", errors.Wrap(err, "subsquare longitude")
+		return "", fmt.Errorf("subsquare longitude: %w", err)
 	}
 	locator += val
 	val, err = n2l(int(math.Floor(lat)))
 	if err != nil {
-		return "", errors.Wrap(err, "subsquare latitude")
+		return "", fmt.Errorf("subsquare latitude: %w", err)
 	}
 	locator += val
 
@@ -67,23 +67,23 @@ func ConvertGridLocation(location string) (float64, float64, error) {
 	var err error
 	l[0], err = l2n(string(location[0]))
 	if err != nil {
-		return 0, 0, errors.Wrap(err, "longitude field value")
+		return 0, 0, fmt.Errorf("longitude field value: %w", err)
 	}
 	l[1], err = l2n(string(location[1]))
 	if err != nil {
-		return 0, 0, errors.Wrap(err, "latitude field value")
+		return 0, 0, fmt.Errorf("latitude field value: %w", err)
 	}
 
 	// Square
 	val, err := strconv.ParseInt(string(location[2]), 10, 64)
 	if err != nil {
-		return 0, 0, errors.Wrap(err, "longitude sqare value")
+		return 0, 0, fmt.Errorf("longitude sqare value: %w", err)
 	}
 	l[2] = int(val)
 
 	val, err = strconv.ParseInt(string(location[3]), 10, 64)
 	if err != nil {
-		return 0, 0, errors.Wrap(err, "latitude sqare value")
+		return 0, 0, fmt.Errorf("latitude sqare value: %w", err)
 	}
 	l[3] = int(val)
 
@@ -91,11 +91,11 @@ func ConvertGridLocation(location string) (float64, float64, error) {
 		// Subsquare
 		l[4], err = l2n(string(location[4]))
 		if err != nil {
-			return 0, 0, errors.Wrap(err, "longitude subsquare value")
+			return 0, 0, fmt.Errorf("longitude subsquare value: %w", err)
 		}
 		l[5], err = l2n(string(location[5]))
 		if err != nil {
-			return 0, 0, errors.Wrap(err, "latitude subsquare value")
+			return 0, 0, fmt.Errorf("latitude subsquare value: %w", err)
 		}
 	}
 
